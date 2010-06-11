@@ -35,6 +35,8 @@ def got_connection(connection, username, password):
 
     while True:
         raw_msg = yield queue.get()
+        # hack - we should really be finding out the content encoding and using
+        # carrot.serializers.
         msg = loads(raw_msg.content.body)
         task = tasks[msg['task']]
         task(*msg['args'], **msg['kwargs'])
