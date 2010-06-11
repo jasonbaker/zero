@@ -20,6 +20,9 @@ setup(name='zero',
       install_requires=[
           'celery', 'twisted'
       ],
+      setup_requires=[
+          'setuptools_git',
+      ],
       scripts=['zero.tac'],
       entry_points={
           'console_scripts' : ['zerod=zero.zerod:main'],
