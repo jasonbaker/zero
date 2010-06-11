@@ -8,12 +8,13 @@ from txamqp.protocol import AMQClient
 from txamqp.client import TwistedDelegate
 from celery import conf
 
-amqp_file = resource_filename(__name__, 'amqp0-9.xml')
+amqp_file = resource_filename(__name__, 'amqp0-8.xml')
 spec = txamqp.spec.load(amqp_file)
 
 @inlineCallbacks
 def got_connection(connection, username, password):
     print 'Connected to broker'
+    yield connection.authenticate(username, password)
     print 'Authenticated'
     chan = yield connection.channel(1)
     yield chan.channel_open()
