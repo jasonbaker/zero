@@ -4,11 +4,13 @@ from twisted.scheduling.task import ScheduledCall
 from celery import conf
 from celery.registry import tasks
 import zero.crontask
+from zero.amqp import connect_to_server
 
 def main():
     from celery.loaders import current_loader
     current_loader().init_worker()
     schedule_tasks()
+    connect_to_server() 
     reactor.run()
 
 def schedule_tasks():
