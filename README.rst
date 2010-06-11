@@ -15,4 +15,11 @@ Zero is still in the proof of concept phase.
 
 Zero currently does not support celery's PeriodicTask interface largely due to
 it working differently from twisted.scheduling's interface.  A fix for this is
-planned.
+planned.  You may make tasks schedulable by subclassing zero.cron.CronTask.
+Upon doing so, you must give the subclass a cron attribute which has the same
+syntax as `cron <http://en.wikipedia.org/wiki/Cron#Examples>`_.  Ex::
+
+    class MyTask(CronTask):
+        cron='*/5 * * * *'
+        def run(self):
+            print 'Hello, world!'
