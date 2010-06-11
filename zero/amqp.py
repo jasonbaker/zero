@@ -7,6 +7,8 @@ import txamqp.spec
 from txamqp.protocol import AMQClient
 from txamqp.client import TwistedDelegate
 from celery import conf
+from celery.registry import tasks
+from cPickle import loads
 
 amqp_file = resource_filename(__name__, 'amqp0-8.xml')
 spec = txamqp.spec.load(amqp_file)
@@ -19,9 +21,28 @@ def got_connection(connection, username, password):
     chan = yield connection.channel(1)
     yield chan.channel_open()
 
+    yield chan.queue_declare(queue='zero', durable=True, exclusive=False,
+                             auto_delete=False)
+    yield chan.exchange_declare(exchange='zeroservice', type='direct',
+                                durable=True, auto_delete=False)
+    yield chan.queue_bind(queue='zero', exchange='zeroservice',
+                          routing_key='zero_server')
+    yield chan.basic_consume(queue='zero', no_ack=True, consumer_tag='zerotag')
+
+    queue = yield connection.queue('zerotag')
+
+    print 'Listening for messages'
+
+    while True:
+        raw_msg = yield queue.get()
+        msg = loads(raw_msg.content.body)
+        task = tasks[msg['task']]
+        task(*msg['args'], **msg['kwargs'])
+
     print 'Closing connection'
     chan0 = yield connection.channel(0)
     yield chan0.connection_close()
+    reactor.stop()
 
 def connect_to_server():
     host = conf.BROKER_HOST

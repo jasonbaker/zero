@@ -4,6 +4,7 @@ from twisted.scheduling.task import ScheduledCall
 from celery import conf
 from celery.registry import tasks
 import zero.crontask
+import zero.builtin_tasks
 from zero.amqp import connect_to_server
 
 def main():
