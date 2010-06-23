@@ -18,12 +18,11 @@ setup(name='zero',
       include_package_data=True,
       zip_safe=True,
       install_requires=[
-          'celery', 'twisted'
+          'celery', 'twisted', 'txamqp',
       ],
       setup_requires=[
           'setuptools_git',
       ],
-      scripts=['zero.tac'],
       entry_points={
           'console_scripts' : ['zerod=zero.zerod:main'],
       }
